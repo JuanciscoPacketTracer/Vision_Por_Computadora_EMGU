@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -29,6 +30,9 @@ namespace Vision_Por_Computadora_EMGU
         private readonly object _imgLock = new();
         private bool _flipHorizontal = false;
         private bool _flipVertical = false;
+        private bool _faceRecognitionEnabled = false;
+        private CascadeClassifier? _faceCascade;
+        private CascadeClassifier? _eyeCascade;
         readonly int brillo = 0;
         readonly double contraste = 1.0;
         readonly double nitidez = 0.0;
@@ -37,7 +41,7 @@ namespace Vision_Por_Computadora_EMGU
         {
             this.BackColor = Estilos.Fondo;
             this.StartPosition = FormStartPosition.CenterScreen;
-           Estilos.EstilizarLabel(LblValueBrillo, esTitulo: false);
+            Estilos.EstilizarLabel(LblValueBrillo, esTitulo: false);
             Estilos.EstilizarLabel(LblValueContraste, esTitulo: false);
             Estilos.EstilizarLabel(LblValueNitidez, esTitulo: false);
             Estilos.EstilizarLabel(label1, esTitulo: false);
@@ -47,12 +51,13 @@ namespace Vision_Por_Computadora_EMGU
             Estilos.EstilizarBoton(BtnCargar, "🎥 Cargar Video");
             Estilos.EstilizarBoton(BtnFlipH, "🔄 Flip Horizontal");
             Estilos.EstilizarBoton(BtnFlipV, "🔄 Flip Vertical");
+            Estilos.EstilizarBoton(BtnReconocer, "👤 Reconocer Rostro");
             Estilos.EstilizarHScrollBar(SBContraste);
             Estilos.EstilizarHScrollBar(SBNitidez);
             Estilos.EstilizarHScrollBar(SBBrillo);
             Estilos.EstilizarRadioButtonComoBoton(RBGris);
             Estilos.EstilizarRadioButtonComoBoton(RBColor);
-             Estilos.EstilizarImageBoxLive(IBVideo);
+            Estilos.EstilizarImageBoxLive(IBVideo);
             Estilos.EstilizarGroupBox(GBVista);
         }
         private void DisplayWebCam()
@@ -76,7 +81,7 @@ namespace Vision_Por_Computadora_EMGU
                             continue;
                         }
 
-                        int b; double c; double n; bool flipH; bool flipV;
+                        int b; double c; double n; bool flipH; bool flipV; bool detectFaces;
                         lock (_paramsLock)
                         {
                             b = _brightness;
@@ -84,6 +89,7 @@ namespace Vision_Por_Computadora_EMGU
                             n = _sharpness;
                             flipH = _flipHorizontal;
                             flipV = _flipVertical;
+                            detectFaces = _faceRecognitionEnabled;
                         }
 
                         using Mat adjusted = new();
@@ -113,6 +119,31 @@ namespace Vision_Por_Computadora_EMGU
                         int passes = (int)Math.Round(n * 3.0); // 0..3
                         for (int i = 0; i < passes; i++)
                             CvInvoke.Filter2D(flipTarget, flipTarget, kernelSharpen, new Point(-1, -1));
+
+                        if (detectFaces && _faceCascade != null && _eyeCascade != null)
+                        {
+                            using Mat gray = new();
+                            CvInvoke.CvtColor(flipTarget, gray, ColorConversion.Bgr2Gray);
+                            CvInvoke.EqualizeHist(gray, gray);
+
+                            Rectangle[] faces = _faceCascade.DetectMultiScale(gray, 1.1, 6, new Size(60, 60));
+                            foreach (var faceRect in faces)
+                            {
+                                CvInvoke.Rectangle(flipTarget, faceRect, new MCvScalar(255, 0, 0), 2);
+
+                                using Mat faceRoi = new(gray, faceRect);
+                                Rectangle[] eyes = _eyeCascade.DetectMultiScale(faceRoi, 1.1, 8, new Size(18, 18));
+                                foreach (var eyeRect in eyes)
+                                {
+                                    Rectangle adjustedEyeRect = new(
+                                        faceRect.X + eyeRect.X,
+                                        faceRect.Y + eyeRect.Y,
+                                        eyeRect.Width,
+                                        eyeRect.Height);
+                                    CvInvoke.Rectangle(flipTarget, adjustedEyeRect, new MCvScalar(0, 255, 0), 2);
+                                }
+                            }
+                        }
 
                         CvInvoke.Resize(flipTarget, resized, IBVideo.Size);
 
@@ -157,7 +188,7 @@ namespace Vision_Por_Computadora_EMGU
         {
             if (_running) return;
             captureVideo = new VideoCapture();
-            
+
             if (!captureVideo.IsOpened)
             {
                 MessageBox.Show("No se pudo abrir la cámara.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -181,7 +212,7 @@ namespace Vision_Por_Computadora_EMGU
                 MessageBox.Show("Por favor, carga un video primero.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             lock (_paramsLock)
             {
                 _flipHorizontal = !_flipHorizontal;
@@ -195,7 +226,7 @@ namespace Vision_Por_Computadora_EMGU
                 MessageBox.Show("Por favor, carga un video primero.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             lock (_paramsLock)
             {
                 _flipVertical = !_flipVertical;
@@ -271,6 +302,85 @@ namespace Vision_Por_Computadora_EMGU
         private void FrmVideo_Load(object sender, EventArgs e)
         {
             RBColor.Checked = true;
+        }
+
+        private static string GetCascadePath(string fileName)
+        {
+            string[] possiblePaths =
+            [
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", fileName),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "data", fileName),
+            ];
+
+            foreach (var path in possiblePaths)
+            {
+                string fullPath = Path.GetFullPath(path);
+                if (File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
+            }
+
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", fileName);
+        }
+
+        private bool EnsureFaceCascadeLoaded()
+        {
+            if (_faceCascade != null && _eyeCascade != null) return true;
+
+            string facePath = GetCascadePath("haarcascade_frontalface_alt.xml");
+            string eyePath = GetCascadePath("haarcascade_eye.xml");
+
+            if (!File.Exists(facePath))
+            {
+                MessageBox.Show($"Archivo no encontrado: {facePath}\n\nPor favor, descarga haarcascade_frontalface_alt.xml desde:\nhttps://github.com/opencv/opencv/tree/master/data/haarcascades\ny colócalo en la carpeta 'data' del proyecto.",
+                    "Error de configuración", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (!File.Exists(eyePath))
+            {
+                MessageBox.Show($"Archivo no encontrado: {eyePath}\n\nPor favor, descarga haarcascade_eye.xml desde:\nhttps://github.com/opencv/opencv/tree/master/data/haarcascades\ny colócalo en la carpeta 'data' del proyecto.",
+                    "Error de configuración", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            try
+            {
+                _faceCascade ??= new CascadeClassifier(facePath);
+                _eyeCascade ??= new CascadeClassifier(eyePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al inicializar clasificadores: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private void BtnReconocer_Click(object sender, EventArgs e)
+        {
+            if (captureVideo == null || !captureVideo.IsOpened || !_running)
+            {
+                MessageBox.Show("Por favor, carga un video primero.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            lock (_paramsLock)
+            {
+                if (!_faceRecognitionEnabled)
+                {
+                    if (!EnsureFaceCascadeLoaded()) return;
+                    _faceRecognitionEnabled = true;
+                    BtnReconocer.Text = "🛑 Detener Reconocimiento";
+                }
+                else
+                {
+                    _faceRecognitionEnabled = false;
+                    BtnReconocer.Text = "👤 Reconocer Rostro";
+                }
+            }
         }
     }
 }

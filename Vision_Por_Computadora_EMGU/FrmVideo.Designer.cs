@@ -46,6 +46,7 @@
             LblValueNitidez = new Label();
             label4 = new Label();
             SBNitidez = new HScrollBar();
+            BtnReconocer = new Button();
             ((System.ComponentModel.ISupportInitialize)IBVideo).BeginInit();
             GBVista.SuspendLayout();
             SuspendLayout();
@@ -62,9 +63,9 @@
             // 
             // BtnFlipH
             // 
-            BtnFlipH.Location = new Point(872, 426);
+            BtnFlipH.Location = new Point(804, 426);
             BtnFlipH.Name = "BtnFlipH";
-            BtnFlipH.Size = new Size(172, 48);
+            BtnFlipH.Size = new Size(240, 48);
             BtnFlipH.TabIndex = 3;
             BtnFlipH.Text = "button1";
             BtnFlipH.UseVisualStyleBackColor = true;
@@ -72,9 +73,9 @@
             // 
             // BtnFlipV
             // 
-            BtnFlipV.Location = new Point(872, 492);
+            BtnFlipV.Location = new Point(804, 492);
             BtnFlipV.Name = "BtnFlipV";
-            BtnFlipV.Size = new Size(172, 48);
+            BtnFlipV.Size = new Size(240, 48);
             BtnFlipV.TabIndex = 4;
             BtnFlipV.Text = "button2";
             BtnFlipV.UseVisualStyleBackColor = true;
@@ -211,11 +212,22 @@
             SBNitidez.TabIndex = 14;
             SBNitidez.Scroll += SBNitidez_Scroll;
             // 
+            // BtnReconocer
+            // 
+            BtnReconocer.Location = new Point(433, 601);
+            BtnReconocer.Name = "BtnReconocer";
+            BtnReconocer.Size = new Size(206, 47);
+            BtnReconocer.TabIndex = 17;
+            BtnReconocer.Text = "Reconocer";
+            BtnReconocer.UseVisualStyleBackColor = true;
+            BtnReconocer.Click += BtnReconocer_Click;
+            // 
             // FrmVideo
             // 
             AutoScaleDimensions = new SizeF(9F, 54F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1056, 676);
+            Controls.Add(BtnReconocer);
             Controls.Add(LblValueNitidez);
             Controls.Add(label4);
             Controls.Add(SBNitidez);
@@ -263,5 +275,6 @@
         private Label LblValueNitidez;
         private Label label4;
         private HScrollBar SBNitidez;
+        private Button BtnReconocer;
     }
 }

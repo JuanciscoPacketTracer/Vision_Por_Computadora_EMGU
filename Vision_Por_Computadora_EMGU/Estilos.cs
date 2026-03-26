@@ -7,19 +7,19 @@ namespace Vision_Por_Computadora_EMGU
 {
     public class Estilos
     {
-        public static Color Fondo = Color.FromArgb(30, 30, 46);
-        public static Color Superficie = Color.FromArgb(45, 45, 65);
-        public static Color Acento = Color.FromArgb(137, 180, 250);
-        public static Color AcentoHover = Color.FromArgb(116, 199, 236);
-        public static Color Peligro = Color.FromArgb(243, 139, 168);
-        public static Color PeligroHover = Color.FromArgb(235, 111, 146);
-        public static Color TextoClaro = Color.White;
-        public static Color TextoOscuro = Color.FromArgb(30, 30, 46);
-        public static Color TextoSecundario = Color.FromArgb(166, 173, 200);
-        public static Color CeldaAlterna = Color.FromArgb(40, 40, 58);
-        public static Font FuenteNormal = new("Segoe UI", 14);
-        public static Font FuenteBold = new("Segoe UI", 14, FontStyle.Bold);
-        public static Font FuenteTitulo = new("Segoe UI", 24, FontStyle.Bold);
+        public static readonly Color Fondo = Color.FromArgb(30, 30, 46);
+        public static readonly Color Superficie = Color.FromArgb(45, 45, 65);
+        public static readonly Color Acento = Color.FromArgb(137, 180, 250);
+        public static readonly Color AcentoHover = Color.FromArgb(116, 199, 236);
+        public static readonly Color Peligro = Color.FromArgb(243, 139, 168);
+        public static readonly Color PeligroHover = Color.FromArgb(235, 111, 146);
+        public static readonly Color TextoClaro = Color.White;
+        public static readonly Color TextoOscuro = Color.FromArgb(30, 30, 46);
+        public static readonly Color TextoSecundario = Color.FromArgb(166, 173, 200);
+        public static readonly Color CeldaAlterna = Color.FromArgb(40, 40, 58);
+        public static readonly Font FuenteNormal = new("Segoe UI", 14);
+        public static readonly Font FuenteBold = new("Segoe UI", 14, FontStyle.Bold);
+        public static readonly Font FuenteTitulo = new("Segoe UI", 24, FontStyle.Bold);
         public static void EstilizarForm(Form frm, string titulo)
         {
             frm.BackColor = Fondo;
