@@ -1,6 +1,6 @@
 ﻿namespace Vision_Por_Computadora_EMGU
 {
-    partial class frmMenu
+    partial class FrmMenu
     {
         /// <summary>
         ///  Required designer variable.
@@ -41,7 +41,7 @@
             btnImagenes.TabIndex = 0;
             btnImagenes.Text = "Imagenes";
             btnImagenes.UseVisualStyleBackColor = true;
-            btnImagenes.Click += btnImagenes_Click;
+            btnImagenes.Click += BtnImagenes_Click;
             // 
             // btnVideo
             // 
@@ -52,9 +52,9 @@
             btnVideo.TabIndex = 1;
             btnVideo.Text = "Video";
             btnVideo.UseVisualStyleBackColor = true;
-            btnVideo.Click += btnVideo_Click;
+            btnVideo.Click += BtnVideo_Click;
             // 
-            // frmMenu
+            // FrmMenu
             // 
             AutoScaleDimensions = new SizeF(9F, 54F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -63,8 +63,9 @@
             Controls.Add(btnImagenes);
             Font = new Font("Sans Serif Collection", 11.9999981F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Margin = new Padding(4, 11, 4, 11);
-            Name = "frmMenu";
+            Name = "FrmMenu";
             Text = "Menu";
+            Load += FrmMenu_Load;
             ResumeLayout(false);
         }
 

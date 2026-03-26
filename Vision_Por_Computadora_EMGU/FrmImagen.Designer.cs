@@ -32,7 +32,7 @@
             BtnCargar = new Button();
             IBImagen = new Emgu.CV.UI.ImageBox();
             BtnGrises = new Button();
-            textBox1 = new TextBox();
+            TbPath = new TextBox();
             BtnHSV = new Button();
             BtnCerrar = new Button();
             BtnYCrCb = new Button();
@@ -71,12 +71,13 @@
             BtnGrises.UseVisualStyleBackColor = true;
             BtnGrises.Click += BtnGrises_Click;
             // 
-            // textBox1
+            // TbPath
             // 
-            textBox1.Location = new Point(355, 12);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(512, 50);
-            textBox1.TabIndex = 4;
+            TbPath.Location = new Point(212, 12);
+            TbPath.Name = "TbPath";
+            TbPath.ReadOnly = true;
+            TbPath.Size = new Size(655, 50);
+            TbPath.TabIndex = 4;
             // 
             // BtnHSV
             // 
@@ -137,7 +138,7 @@
             Controls.Add(BtnYCrCb);
             Controls.Add(BtnCerrar);
             Controls.Add(BtnHSV);
-            Controls.Add(textBox1);
+            Controls.Add(TbPath);
             Controls.Add(BtnGrises);
             Controls.Add(IBImagen);
             Controls.Add(BtnCargar);
@@ -145,6 +146,7 @@
             Margin = new Padding(4, 11, 4, 11);
             Name = "FrmImagen";
             Text = "Tranformacion de Imagenes";
+            Load += FrmImagen_Load;
             ((System.ComponentModel.ISupportInitialize)IBImagen).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -155,7 +157,7 @@
         private Button BtnCargar;
         private Emgu.CV.UI.ImageBox IBImagen;
         private Button BtnGrises;
-        private TextBox textBox1;
+        private TextBox TbPath;
         private Button BtnHSV;
         private Button BtnCerrar;
         private Button BtnYCrCb;

@@ -1,18 +1,34 @@
+using Microsoft.VisualBasic;
+
 namespace Vision_Por_Computadora_EMGU
 {
-    public partial class frmMenu : Form
+    public partial class FrmMenu : Form
     {
-        public frmMenu()
+        private void AplicarEstilo()
+        {
+            this.BackColor = Estilos.Fondo;
+            this.StartPosition = FormStartPosition.CenterScreen;
+           Estilos.EstilizarBoton(btnImagenes, "🖼️ Procesar Imagenes");
+           Estilos.EstilizarBoton(btnVideo, "🎥 Procesar Video");
+        }
+        public FrmMenu()
         {
             InitializeComponent();
+            AplicarEstilo();
         }
 
-        private void btnImagenes_Click(object sender, EventArgs e)
+        private void BtnImagenes_Click(object sender, EventArgs e)
+        {
+            FrmImagen img = new();
+            img.Show();
+        }
+
+        private void BtnVideo_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void btnVideo_Click(object sender, EventArgs e)
+        private void FrmMenu_Load(object sender, EventArgs e)
         {
 
         }
