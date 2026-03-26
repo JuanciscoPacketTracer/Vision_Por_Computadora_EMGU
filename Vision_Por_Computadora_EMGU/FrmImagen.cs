@@ -14,5 +14,35 @@ namespace Vision_Por_Computadora_EMGU
         {
             InitializeComponent();
         }
+
+        private void BtnCargar_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnGrises_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnHSV_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnYCrCb_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnBGR_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnCerrar_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
