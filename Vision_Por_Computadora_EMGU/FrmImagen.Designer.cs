@@ -41,6 +41,9 @@
             IBRostro = new Emgu.CV.UI.ImageBox();
             BtnReconocer = new Button();
             LblInfo2 = new Label();
+            BtnPrev = new Button();
+            BtnNext = new Button();
+            LblImg = new Label();
             ((System.ComponentModel.ISupportInitialize)IBImagen).BeginInit();
             ((System.ComponentModel.ISupportInitialize)IBRostro).BeginInit();
             SuspendLayout();
@@ -49,7 +52,7 @@
             // 
             BtnCargar.Location = new Point(12, 12);
             BtnCargar.Name = "BtnCargar";
-            BtnCargar.Size = new Size(168, 47);
+            BtnCargar.Size = new Size(168, 69);
             BtnCargar.TabIndex = 0;
             BtnCargar.Text = "Cargar";
             BtnCargar.UseVisualStyleBackColor = true;
@@ -58,7 +61,7 @@
             // IBImagen
             // 
             IBImagen.BorderStyle = BorderStyle.Fixed3D;
-            IBImagen.Location = new Point(12, 76);
+            IBImagen.Location = new Point(12, 100);
             IBImagen.Name = "IBImagen";
             IBImagen.Size = new Size(300, 300);
             IBImagen.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -67,7 +70,7 @@
             // 
             // BtnGrises
             // 
-            BtnGrises.Location = new Point(661, 76);
+            BtnGrises.Location = new Point(661, 100);
             BtnGrises.Name = "BtnGrises";
             BtnGrises.Size = new Size(206, 58);
             BtnGrises.TabIndex = 3;
@@ -85,7 +88,7 @@
             // 
             // BtnHSV
             // 
-            BtnHSV.Location = new Point(661, 150);
+            BtnHSV.Location = new Point(661, 174);
             BtnHSV.Name = "BtnHSV";
             BtnHSV.Size = new Size(206, 58);
             BtnHSV.TabIndex = 5;
@@ -95,7 +98,7 @@
             // 
             // BtnCerrar
             // 
-            BtnCerrar.Location = new Point(661, 466);
+            BtnCerrar.Location = new Point(661, 534);
             BtnCerrar.Name = "BtnCerrar";
             BtnCerrar.Size = new Size(206, 62);
             BtnCerrar.TabIndex = 6;
@@ -105,7 +108,7 @@
             // 
             // BtnYCrCb
             // 
-            BtnYCrCb.Location = new Point(661, 225);
+            BtnYCrCb.Location = new Point(661, 249);
             BtnYCrCb.Name = "BtnYCrCb";
             BtnYCrCb.Size = new Size(206, 58);
             BtnYCrCb.TabIndex = 7;
@@ -115,7 +118,7 @@
             // 
             // BtnBGR
             // 
-            BtnBGR.Location = new Point(661, 380);
+            BtnBGR.Location = new Point(661, 342);
             BtnBGR.Name = "BtnBGR";
             BtnBGR.Size = new Size(206, 58);
             BtnBGR.TabIndex = 8;
@@ -126,7 +129,7 @@
             // LblInfo
             // 
             LblInfo.AutoSize = true;
-            LblInfo.Location = new Point(2, 391);
+            LblInfo.Location = new Point(0, 507);
             LblInfo.Name = "LblInfo";
             LblInfo.Size = new Size(324, 54);
             LblInfo.TabIndex = 9;
@@ -135,7 +138,7 @@
             // IBRostro
             // 
             IBRostro.BorderStyle = BorderStyle.Fixed3D;
-            IBRostro.Location = new Point(332, 76);
+            IBRostro.Location = new Point(332, 100);
             IBRostro.Name = "IBRostro";
             IBRostro.Size = new Size(300, 300);
             IBRostro.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -144,7 +147,7 @@
             // 
             // BtnReconocer
             // 
-            BtnReconocer.Location = new Point(661, 300);
+            BtnReconocer.Location = new Point(389, 415);
             BtnReconocer.Name = "BtnReconocer";
             BtnReconocer.Size = new Size(206, 47);
             BtnReconocer.TabIndex = 11;
@@ -155,16 +158,48 @@
             // LblInfo2
             // 
             LblInfo2.AutoSize = true;
-            LblInfo2.Location = new Point(12, 470);
+            LblInfo2.Location = new Point(12, 543);
             LblInfo2.Name = "LblInfo2";
             LblInfo2.Size = new Size(0, 54);
             LblInfo2.TabIndex = 12;
+            // 
+            // BtnPrev
+            // 
+            BtnPrev.Location = new Point(12, 460);
+            BtnPrev.Name = "BtnPrev";
+            BtnPrev.Size = new Size(71, 47);
+            BtnPrev.TabIndex = 13;
+            BtnPrev.Text = "<";
+            BtnPrev.UseVisualStyleBackColor = true;
+            BtnPrev.Click += BtnPrev_Click;
+            // 
+            // BtnNext
+            // 
+            BtnNext.Location = new Point(241, 460);
+            BtnNext.Name = "BtnNext";
+            BtnNext.Size = new Size(71, 47);
+            BtnNext.TabIndex = 14;
+            BtnNext.Text = ">";
+            BtnNext.UseVisualStyleBackColor = true;
+            BtnNext.Click += BtnNext_Click;
+            // 
+            // LblImg
+            // 
+            LblImg.AutoSize = true;
+            LblImg.Location = new Point(12, 403);
+            LblImg.Name = "LblImg";
+            LblImg.Size = new Size(124, 54);
+            LblImg.TabIndex = 15;
+            LblImg.Text = "Imagen 0 de 0";
             // 
             // FrmImagen
             // 
             AutoScaleDimensions = new SizeF(9F, 54F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(879, 540);
+            ClientSize = new Size(879, 598);
+            Controls.Add(LblImg);
+            Controls.Add(BtnNext);
+            Controls.Add(BtnPrev);
             Controls.Add(LblInfo2);
             Controls.Add(BtnReconocer);
             Controls.Add(IBRostro);
@@ -202,5 +237,8 @@
         private Emgu.CV.UI.ImageBox IBRostro;
         private Button BtnReconocer;
         private Label LblInfo2;
+        private Button BtnPrev;
+        private Button BtnNext;
+        private Label LblImg;
     }
 }

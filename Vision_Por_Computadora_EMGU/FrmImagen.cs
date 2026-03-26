@@ -20,6 +20,8 @@ namespace Vision_Por_Computadora_EMGU
         CascadeClassifier face;
         CascadeClassifier eye;
         CascadeClassifier eyeWithGlasses;
+        readonly List<string> _imagenes = [];
+        int _indiceImagenActual = -1;
 
         private void AplicarEstilo()
         {
@@ -27,7 +29,7 @@ namespace Vision_Por_Computadora_EMGU
             this.StartPosition = FormStartPosition.CenterScreen;
             Estilos.EstilizarLabel(LblInfo, esTitulo: false);
             Estilos.EstilizarLabel(LblInfo2, esTitulo: false);
-            Estilos.EstilizarBoton(BtnCargar, "🖼️ Cargar Imagen");
+            Estilos.EstilizarBoton(BtnCargar, "🖼️ Cargar Desde Archivo");
             Estilos.EstilizarBoton(BtnGrises, "⬜ BGR a Grises");
             Estilos.EstilizarBoton(BtnHSV, "⬜ BGR a HSV");
             Estilos.EstilizarBoton(BtnYCrCb, "⬜ BGR a YCrCb");
@@ -37,6 +39,9 @@ namespace Vision_Por_Computadora_EMGU
             Estilos.EstilizarImageBoxProcesado(IBImagen);
             Estilos.EstilizarImageBoxProcesado(IBRostro);
             Estilos.EstilizarTextBoxConPlaceholder(TbPath, "Ruta de la imagen...");
+            Estilos.EstilizarBoton(BtnPrev, "◀️");
+            Estilos.EstilizarBoton(BtnNext, "▶️");
+            Estilos.EstilizarLabel(LblImg, false);
         }
         public FrmImagen()
         {
@@ -59,6 +64,28 @@ namespace Vision_Por_Computadora_EMGU
             IBImagen.Image = _imagenActual;
             MostrarInformacion();
         }
+        private void CargarImagenDesdeRuta(string ruta)
+        {
+            _imagenOriginal = CvInvoke.Imread(ruta, ImreadModes.ColorBgr);
+            _imagenActual = _imagenOriginal.Clone();
+            IBImagen.Image = _imagenActual;
+            IBRostro.Image = _imagenActual;
+            IBRostro.Visible = false;
+            TbPath.Text = ruta;
+            LblImg.Text = $"{Path.GetFileName(ruta)} ({_indiceImagenActual + 1}/{_imagenes.Count})";
+            MostrarInformacion();
+            BtnReconocer.Visible = true;
+        }
+
+        private void CargarImagenPorIndice(int indice)
+        {
+            if (_imagenes.Count == 0) return;
+            if (indice < 0 || indice >= _imagenes.Count) return;
+
+            _indiceImagenActual = indice;
+            CargarImagenDesdeRuta(_imagenes[_indiceImagenActual]);
+        }
+
         private void BtnCargar_Click(object sender, EventArgs e)
         {
             using OpenFileDialog ofd = new();
@@ -68,14 +95,9 @@ namespace Vision_Por_Computadora_EMGU
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                _imagenOriginal = CvInvoke.Imread(ofd.FileName, ImreadModes.ColorBgr);
-                _imagenActual = _imagenOriginal.Clone();
-                IBImagen.Image = _imagenActual;
-                IBRostro.Image = _imagenActual;
-                IBRostro.Visible = true;
-                MostrarInformacion();
-                TbPath.Text = ofd.FileName;
-                MostrarInformacion();
+                _indiceImagenActual = -1;
+                CargarImagenDesdeRuta(ofd.FileName);
+                LblImg.Text = Path.GetFileName(ofd.FileName);
             }
         }
 
@@ -122,7 +144,7 @@ namespace Vision_Por_Computadora_EMGU
             img?.Dispose();
             this.Close();
         }
-        
+
         private static string GetCascadePath(string fileName)
         {
             string[] possiblePaths =
@@ -187,6 +209,29 @@ namespace Vision_Por_Computadora_EMGU
         {
             InitializeCascadeClassifiers();
             IBRostro.Visible = false;
+            BtnReconocer.Visible = false;
+
+            const string rutaFotos = @"C:\FOTOS";
+            _imagenes.Clear();
+
+            if (Directory.Exists(rutaFotos))
+            {
+                _imagenes.AddRange(Directory.GetFiles(rutaFotos, "*.JPG"));
+                _imagenes.Sort(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (_imagenes.Count > 0)
+            {
+                CargarImagenPorIndice(0);
+                BtnPrev.Enabled = true;
+                BtnNext.Enabled = true;
+            }
+            else
+            {
+                LblImg.Text = "Sin imágenes en C:\\FOTOS";
+                BtnPrev.Enabled = false;
+                BtnNext.Enabled = false;
+            }
         }
         private void BtnReconocer_Click(object sender, EventArgs e)
         {
@@ -244,15 +289,29 @@ namespace Vision_Por_Computadora_EMGU
                         CvInvoke.Rectangle(resultImage, adjustedEyeRect, new Emgu.CV.Structure.MCvScalar(0, 255, 0), 2);
                     }
                 }
-
+                IBRostro.Visible = true;
                 IBRostro.Image = resultImage;
-                LblInfo2.Text = $"Rostros detectados: {faces.Count} | Ojos detectados: {totalEyes} | Con lentes: {peopleWithGlasses}";
+                LblInfo2.Text = $"Rostros detectados: {faces.Count} | Ojos detectados: {totalEyes}";
                 grayImage.Dispose();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error durante el reconocimiento de rostros: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void BtnPrev_Click(object sender, EventArgs e)
+        {
+            if (_imagenes.Count == 0) return;
+            int nuevoIndice = _indiceImagenActual <= 0 ? _imagenes.Count - 1 : _indiceImagenActual - 1;
+            CargarImagenPorIndice(nuevoIndice);
+        }
+
+        private void BtnNext_Click(object sender, EventArgs e)
+        {
+            if (_imagenes.Count == 0) return;
+            int nuevoIndice = _indiceImagenActual >= _imagenes.Count - 1 ? 0 : _indiceImagenActual + 1;
+            CargarImagenPorIndice(nuevoIndice);
         }
     }
 }
