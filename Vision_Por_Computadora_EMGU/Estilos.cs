@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Emgu.CV.UI;
 
 namespace Vision_Por_Computadora_EMGU
 {
@@ -187,6 +188,73 @@ namespace Vision_Por_Computadora_EMGU
             cb.Cursor = Cursors.Hand;
             cb.FlatStyle = FlatStyle.Standard;
             cb.Padding = new Padding(3, 2, 3, 2);
+        }
+        public static Panel CrearMarcoParaImageBoxProcesado(ImageBox imageBox, string? textoPlaceholder = "Sin imagen")
+        {
+            var panel = new DoubleBufferedPanel
+            {
+                BackColor = Superficie,
+                Padding = new Padding(10),
+                Dock = DockStyle.Fill
+            };
+
+            EstilizarImageBoxProcesado(imageBox);
+            imageBox.Dock = DockStyle.Fill;
+            Label? lbl = null;
+            if (!string.IsNullOrWhiteSpace(textoPlaceholder))
+            {
+                lbl = new Label
+                {
+                    Text = textoPlaceholder,
+                    ForeColor = TextoSecundario,
+                    BackColor = Color.Transparent,
+                    AutoSize = true
+                };
+
+                panel.Resize += (s, e) =>
+                {
+                    lbl.Left = (panel.ClientSize.Width - lbl.Width) / 2;
+                    lbl.Top = (panel.ClientSize.Height - lbl.Height) / 2;
+                };
+            }
+            panel.Paint += (s, e) =>
+            {
+                using var pen = new Pen(Acento, 2);
+                var rect = panel.ClientRectangle;
+                rect.Width -= 1;
+                rect.Height -= 1;
+                e.Graphics.DrawRectangle(pen, rect);
+            };
+
+            panel.Controls.Add(imageBox);
+            if (lbl != null) panel.Controls.Add(lbl);
+
+            return panel;
+        }
+
+        public static void EstilizarImageBoxProcesado(ImageBox ib)
+        {
+            ib.BackColor = Fondo;
+
+            ib.SizeMode = PictureBoxSizeMode.Zoom;
+        }
+
+        public static void EstilizarImageBoxLive(ImageBox ib)
+        {
+            ib.BackColor = Color.Black;
+            ib.SizeMode = PictureBoxSizeMode.Zoom;
+        }
+    }
+
+    public class DoubleBufferedPanel : Panel
+    {
+        public DoubleBufferedPanel()
+        {
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.UserPaint |
+                         ControlStyles.AllPaintingInWmPaint |
+                         ControlStyles.OptimizedDoubleBuffer, true);
+            this.UpdateStyles();
         }
     }
 }
