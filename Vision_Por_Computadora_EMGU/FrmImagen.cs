@@ -70,7 +70,7 @@ namespace Vision_Por_Computadora_EMGU
         private void BtnGrises_Click(object sender, EventArgs e)
         {
             if (_imagenOriginal == null) return;
-            Mat gray = new Mat();
+            Mat gray = new();
             CvInvoke.CvtColor(_imagenOriginal, gray, ColorConversion.Bgr2Gray);
             _imagenActual = gray;
             ActualizarVista();
@@ -80,7 +80,7 @@ namespace Vision_Por_Computadora_EMGU
         {
             if (_imagenActual == null) return;
             _imagenActual = _imagenOriginal.Clone();
-            Mat hsv = new Mat();
+            Mat hsv = new();
             CvInvoke.CvtColor(_imagenActual, hsv, ColorConversion.Bgr2Hsv);
             _imagenActual = hsv;
             ActualizarVista();
@@ -90,7 +90,7 @@ namespace Vision_Por_Computadora_EMGU
         {
             if (_imagenActual == null) return;
             _imagenActual = _imagenOriginal.Clone();
-            Mat ycrcb = new Mat();
+            Mat ycrcb = new();
             CvInvoke.CvtColor(_imagenActual, ycrcb, ColorConversion.Bgr2YCrCb);
             _imagenActual = ycrcb;
             ActualizarVista();
@@ -107,10 +107,7 @@ namespace Vision_Por_Computadora_EMGU
         {
             var img = IBImagen.Image;
             IBImagen.Image = null;
-            if (img != null)
-            {
-                img.Dispose();
-            }
+            img?.Dispose();
             this.Close();
         }
 

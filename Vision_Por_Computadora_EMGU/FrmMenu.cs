@@ -25,7 +25,8 @@ namespace Vision_Por_Computadora_EMGU
 
         private void BtnVideo_Click(object sender, EventArgs e)
         {
-
+            FrmVideo vid = new();
+            vid.Show();
         }
 
         private void FrmMenu_Load(object sender, EventArgs e)

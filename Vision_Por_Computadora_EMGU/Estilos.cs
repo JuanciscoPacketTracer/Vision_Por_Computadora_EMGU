@@ -189,6 +189,74 @@ namespace Vision_Por_Computadora_EMGU
             cb.FlatStyle = FlatStyle.Standard;
             cb.Padding = new Padding(3, 2, 3, 2);
         }
+        public static void EstilizarRadioButtonComoBoton(RadioButton rb)
+        {
+            rb.Appearance = Appearance.Button;
+            rb.AutoSize = false;
+            rb.TextAlign = ContentAlignment.MiddleCenter;
+            rb.Font = FuenteBold;
+            rb.Cursor = Cursors.Hand;
+            rb.FlatStyle = FlatStyle.Flat;
+            rb.FlatAppearance.BorderSize = 0;
+            rb.Size = new Size(140, 36);
+            void Aplicar()
+            {
+                rb.BackColor = rb.Checked ? Acento : Superficie;
+                rb.ForeColor = rb.Checked ? TextoOscuro : TextoClaro;
+            }
+
+            rb.CheckedChanged += (s, e) => Aplicar();
+            Aplicar();
+        }
+        public static void EstilizarHScrollBar(HScrollBar sb)
+        {
+            sb.Cursor = Cursors.Hand;
+            sb.SmallChange = 1;
+            sb.LargeChange = 10;
+            sb.Height = 18;
+        }
+        public static void EstilizarGroupBox(GroupBox gb)
+        {
+            gb.ForeColor = TextoClaro;
+            gb.BackColor = Fondo; 
+            gb.Font = FuenteBold;
+            gb.Paint += (s, e) =>
+            {
+                GroupBox box = (GroupBox)s;
+
+                e.Graphics.Clear(box.BackColor);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                Size textSize = TextRenderer.MeasureText(box.Text, box.Font);
+                Rectangle borderRect = new(
+                    box.ClientRectangle.X,
+                    box.ClientRectangle.Y + (textSize.Height / 2),
+                    box.ClientRectangle.Width - 1,
+                    box.ClientRectangle.Height - (textSize.Height / 2) - 1
+                );
+                using (Pen pen = new(Acento, 1))
+                {
+                    e.Graphics.DrawRectangle(pen, borderRect);
+                }
+                Rectangle textRect = new(
+                    box.ClientRectangle.X + 10,
+                    box.ClientRectangle.Y,
+                    textSize.Width + 2,
+                    textSize.Height
+                );
+
+                using (Brush backBrush = new SolidBrush(box.BackColor))
+                    e.Graphics.FillRectangle(backBrush, textRect);
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    box.Text,
+                    box.Font,
+                    new Point(box.ClientRectangle.X + 12, box.ClientRectangle.Y),
+                    TextoClaro
+                );
+            };
+            gb.Resize += (s, e) => gb.Invalidate();
+        }
+        // EMGU UI
         public static Panel CrearMarcoParaImageBoxProcesado(ImageBox imageBox, string? textoPlaceholder = "Sin imagen")
         {
             var panel = new DoubleBufferedPanel
