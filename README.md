@@ -1,0 +1,1 @@
+# Vision_Por_Computadora_EMGU
