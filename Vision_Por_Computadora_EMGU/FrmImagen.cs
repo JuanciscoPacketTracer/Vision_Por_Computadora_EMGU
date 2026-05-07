@@ -77,14 +77,7 @@ namespace Vision_Por_Computadora_EMGU
             BtnReconocer.Visible = true;
         }
 
-        private void CargarImagenPorIndice(int indice)
-        {
-            if (_imagenes.Count == 0) return;
-            if (indice < 0 || indice >= _imagenes.Count) return;
-
-            _indiceImagenActual = indice;
-            CargarImagenDesdeRuta(_imagenes[_indiceImagenActual]);
-        }
+        
 
         private void BtnCargar_Click(object sender, EventArgs e)
         {
@@ -99,6 +92,14 @@ namespace Vision_Por_Computadora_EMGU
                 CargarImagenDesdeRuta(ofd.FileName);
                 LblImg.Text = Path.GetFileName(ofd.FileName);
             }
+        }
+        private void CargarImagenPorIndice(int indice)
+        {
+            if (_imagenes.Count == 0) return;
+            if (indice < 0 || indice >= _imagenes.Count) return;
+
+            _indiceImagenActual = indice;
+            CargarImagenDesdeRuta(_imagenes[_indiceImagenActual]);
         }
 
         private void BtnGrises_Click(object sender, EventArgs e)

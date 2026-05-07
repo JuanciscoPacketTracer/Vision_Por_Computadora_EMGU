@@ -47,6 +47,7 @@
             label4 = new Label();
             SBNitidez = new HScrollBar();
             BtnReconocer = new Button();
+            btnCargarArchivo = new Button();
             ((System.ComponentModel.ISupportInitialize)IBVideo).BeginInit();
             GBVista.SuspendLayout();
             SuspendLayout();
@@ -105,7 +106,7 @@
             // 
             GBVista.Controls.Add(RBGris);
             GBVista.Controls.Add(RBColor);
-            GBVista.Location = new Point(12, 32);
+            GBVista.Location = new Point(17, 167);
             GBVista.Name = "GBVista";
             GBVista.Size = new Size(185, 143);
             GBVista.TabIndex = 7;
@@ -136,7 +137,7 @@
             // 
             // SBBrillo
             // 
-            SBBrillo.Location = new Point(18, 280);
+            SBBrillo.Location = new Point(17, 351);
             SBBrillo.Name = "SBBrillo";
             SBBrillo.Size = new Size(185, 35);
             SBBrillo.TabIndex = 8;
@@ -145,7 +146,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(18, 217);
+            label1.Location = new Point(11, 313);
             label1.Name = "label1";
             label1.Size = new Size(62, 54);
             label1.TabIndex = 9;
@@ -154,7 +155,7 @@
             // LblValueBrillo
             // 
             LblValueBrillo.AutoSize = true;
-            LblValueBrillo.Location = new Point(226, 280);
+            LblValueBrillo.Location = new Point(225, 351);
             LblValueBrillo.Name = "LblValueBrillo";
             LblValueBrillo.Size = new Size(32, 54);
             LblValueBrillo.TabIndex = 10;
@@ -163,7 +164,7 @@
             // LblValueContraste
             // 
             LblValueContraste.AutoSize = true;
-            LblValueContraste.Location = new Point(226, 391);
+            LblValueContraste.Location = new Point(226, 426);
             LblValueContraste.Name = "LblValueContraste";
             LblValueContraste.Size = new Size(32, 54);
             LblValueContraste.TabIndex = 13;
@@ -172,15 +173,16 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(18, 328);
+            label3.Location = new Point(17, 386);
             label3.Name = "label3";
             label3.Size = new Size(98, 54);
             label3.TabIndex = 12;
             label3.Text = "Contraste";
+            label3.Click += label3_Click;
             // 
             // SBContraste
             // 
-            SBContraste.Location = new Point(18, 391);
+            SBContraste.Location = new Point(18, 426);
             SBContraste.Name = "SBContraste";
             SBContraste.Size = new Size(185, 35);
             SBContraste.TabIndex = 11;
@@ -198,7 +200,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(18, 442);
+            label4.Location = new Point(18, 461);
             label4.Name = "label4";
             label4.Size = new Size(76, 54);
             label4.TabIndex = 15;
@@ -222,11 +224,22 @@
             BtnReconocer.UseVisualStyleBackColor = true;
             BtnReconocer.Click += BtnReconocer_Click;
             // 
+            // btnCargarArchivo
+            // 
+            btnCargarArchivo.Location = new Point(18, 12);
+            btnCargarArchivo.Name = "btnCargarArchivo";
+            btnCargarArchivo.Size = new Size(170, 49);
+            btnCargarArchivo.TabIndex = 18;
+            btnCargarArchivo.Text = "Cargar video";
+            btnCargarArchivo.UseVisualStyleBackColor = true;
+            btnCargarArchivo.Click += btnCargarArchivo_Click;
+            // 
             // FrmVideo
             // 
             AutoScaleDimensions = new SizeF(9F, 54F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1056, 676);
+            Controls.Add(btnCargarArchivo);
             Controls.Add(BtnReconocer);
             Controls.Add(LblValueNitidez);
             Controls.Add(label4);
@@ -276,5 +289,6 @@
         private Label label4;
         private HScrollBar SBNitidez;
         private Button BtnReconocer;
+        private Button btnCargarArchivo;
     }
 }

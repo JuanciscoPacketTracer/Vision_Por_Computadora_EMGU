@@ -5,9 +5,11 @@ using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 
@@ -49,6 +51,7 @@ namespace Vision_Por_Computadora_EMGU
             Estilos.EstilizarLabel(label3, esTitulo: false);
             Estilos.EstilizarBoton(BtnCerrar, "❌ Cerrar", esPeligro: true);
             Estilos.EstilizarBoton(BtnCargar, "🎥 Cargar Video");
+            Estilos.EstilizarBoton(btnCargarArchivo, "📁 Cargar Archivo");
             Estilos.EstilizarBoton(BtnFlipH, "🔄 Flip Horizontal");
             Estilos.EstilizarBoton(BtnFlipV, "🔄 Flip Vertical");
             Estilos.EstilizarBoton(BtnReconocer, "👤 Reconocer Rostro");
@@ -296,7 +299,8 @@ namespace Vision_Por_Computadora_EMGU
 
         private void FrmVideo_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            StopCapture();
+            StopVideoPlayback();
         }
 
         private void FrmVideo_Load(object sender, EventArgs e)
@@ -379,6 +383,134 @@ namespace Vision_Por_Computadora_EMGU
                 {
                     _faceRecognitionEnabled = false;
                     BtnReconocer.Text = "👤 Reconocer Rostro";
+                }
+            }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+        private VideoCapture? _videoCapture;
+        private Thread? _videoThread;
+        private volatile bool _videoPlaybackRunning = false;
+
+        private void btnCargarArchivo_Click(object sender, EventArgs e)
+        {
+            if (_videoPlaybackRunning) return;
+
+            OpenFileDialog pof = new();
+            pof.Title = "Selecciona un video";
+            pof.Filter = "Video Files | *.mp4;*.avi;*.mov;*.mkv";
+
+            if (pof.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    _videoCapture = new VideoCapture(pof.FileName);
+
+                    if (!_videoCapture.IsOpened)
+                    {
+                        MessageBox.Show("No se pudo abrir el video.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        _videoCapture?.Dispose();
+                        _videoCapture = null;
+                        return;
+                    }
+
+                    _videoPlaybackRunning = true;
+                    _videoThread = new Thread(DisplayWebCam2)
+                    {
+                        IsBackground = true
+                    };
+                    _videoThread.Start();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cargar el video: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _videoCapture?.Dispose();
+                    _videoCapture = null;
+                }
+            }
+        }
+
+        private void DisplayWebCam2()
+        {
+            while (_videoPlaybackRunning && _videoCapture != null && _videoCapture.IsOpened)
+            {
+                try
+                {
+                    using (Mat frame = _videoCapture.QueryFrame())
+                    {
+                        if (frame == null || frame.IsEmpty)
+                        {
+                            break;
+                        }
+                        using (Mat resized = new())
+                        {
+                            CvInvoke.Resize(frame, resized, IBVideo.Size);
+                            Mat displayMat = resized.Clone();
+                            if (IBVideo.IsHandleCreated)
+                            {
+                                IBVideo.BeginInvoke((MethodInvoker)delegate
+                                {
+                                    lock (_imgLock)
+                                    {
+                                        var old = IBVideo.Image;
+                                        IBVideo.Image = displayMat;
+                                        if (old != null && old is Mat oldMat) oldMat.Dispose();
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                displayMat?.Dispose();
+                            }
+                        }
+                    }
+
+                    Thread.Sleep(25);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error durante la reproducción: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                }
+            }
+
+            StopVideoPlayback();
+        }
+
+        private void StopVideoPlayback()
+        {
+            _videoPlaybackRunning = false;
+
+            if (_videoThread != null)
+            {
+                try { _videoThread.Join(500); }
+                catch { }
+                _videoThread = null;
+            }
+
+            if (_videoCapture != null)
+            {
+                try { _videoCapture.Dispose(); }
+                catch { }
+                _videoCapture = null;
+            }
+
+            lock (_imgLock)
+            {
+                if (IBVideo.Image != null)
+                {
+                    try
+                    {
+                        if (IBVideo.Image is Mat mat)
+                        {
+                            mat.Dispose();
+                        }
+                        IBVideo.Image = null;
+                    }
+                    catch { }
                 }
             }
         }

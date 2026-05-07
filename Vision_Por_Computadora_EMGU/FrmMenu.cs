@@ -8,8 +8,8 @@ namespace Vision_Por_Computadora_EMGU
         {
             this.BackColor = Estilos.Fondo;
             this.StartPosition = FormStartPosition.CenterScreen;
-           Estilos.EstilizarBoton(btnImagenes, "🖼️ Procesar Imagenes");
-           Estilos.EstilizarBoton(btnVideo, "🎥 Procesar Video");
+            Estilos.EstilizarBoton(btnImagenes, "🖼️ Procesar Imagenes");
+            Estilos.EstilizarBoton(btnVideo, "🎥 Procesar Video");
         }
         public FrmMenu()
         {
@@ -32,6 +32,23 @@ namespace Vision_Por_Computadora_EMGU
         private void FrmMenu_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnExamen1_Click(object sender, EventArgs e)
+        {
+            frmExamen1 frmExamen1 = new();
+            frmExamen1.Show();
+        }
+
+        private void btnVideoImagen_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void BtnReconoce2_Click(object sender, EventArgs e)
+        {
+            FrmReconoce2 frmVI = new();
+            frmVI.Show();
         }
     }
 }
